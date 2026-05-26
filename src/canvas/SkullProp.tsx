@@ -3,6 +3,7 @@ import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Color, Group, MeshStandardMaterial } from 'three';
 import { useEraStore } from '../store/useEraStore';
+import { usePlaybackStore } from '../store/usePlaybackStore';
 import { ERA_BY_ID } from '../data/eras';
 
 export function SkullProp() {
@@ -11,10 +12,15 @@ export function SkullProp() {
   const selected = useEraStore((s) => s.selected);
   const era = selected ? ERA_BY_ID[selected] : null;
 
-  // apply per-era material
+  // Cache the materials we need to pulse so we don't traverse every frame.
+  const materialsRef = useRef<MeshStandardMaterial[]>([]);
+  const baseEmissiveRef = useRef(0.35);
+
+  // Apply per-era material AND collect material refs for the per-frame pulse loop.
   useEffect(() => {
     if (!gltf.scene) return;
     const mat = era?.skullMaterial;
+    const collected: MeshStandardMaterial[] = [];
     gltf.scene.traverse((obj: any) => {
       if (obj.isMesh && obj.material instanceof MeshStandardMaterial) {
         if (mat) {
@@ -30,22 +36,34 @@ export function SkullProp() {
           obj.material.metalness = 0.1;
           obj.material.roughness = 0.6;
         }
+        collected.push(obj.material);
       }
     });
+    materialsRef.current = collected;
+    baseEmissiveRef.current = mat ? 0.35 : 0.1;
   }, [gltf.scene, era]);
 
-  useFrame((state, dt) => {
+  useFrame((state) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
-    // Hover next to her shoulder/head with a gentle bob
-    group.current.position.y = 1.55 + Math.sin(t * 0.9) * 0.06;
-    // Subtle sway, not a full spin — face mostly toward the camera
-    group.current.rotation.y = Math.sin(t * 0.5) * 0.35;
-    group.current.rotation.z = Math.sin(t * 0.6) * 0.05;
+    const lv = usePlaybackStore.getState().level; // 0..1, bass band of analyser
+
+    // Hover near her head, with extra bounce on bass hits
+    group.current.position.y = 1.4 + Math.sin(t * 0.9) * 0.06 + lv * 0.18;
+    // Gentle sway, then a punch of rotation on bass
+    group.current.rotation.y = Math.sin(t * 0.5) * 0.35 + lv * 0.18;
+    group.current.rotation.z = Math.sin(t * 0.6) * 0.05 - lv * 0.08;
+    // Scale pulse, kept subtle so it reads as "alive" not "jumpy"
+    const s = 1 + lv * 0.18;
+    group.current.scale.setScalar(s);
+
+    // Emissive intensity follows the bass for a glow heartbeat
+    const targetEmissive = baseEmissiveRef.current + lv * 1.4;
+    for (const m of materialsRef.current) m.emissiveIntensity = targetEmissive;
   });
 
   return (
-    <group ref={group} position={[0.55, 1.55, 0.4]} scale={0.32}>
+    <group ref={group} position={[-0.85, 1.4, 0.6]} scale={0.35}>
       <primitive object={gltf.scene} />
     </group>
   );

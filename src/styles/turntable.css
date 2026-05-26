@@ -1,0 +1,186 @@
+/* STAGE LAYOUT */
+.stage {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 480px 1.35fr 1fr;
+  gap: 48px;
+  padding: 88px 64px 280px;
+  align-items: center;
+}
+
+/* TURNTABLE */
+.turntable {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.deck {
+  position: relative;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.platter {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px),
+    radial-gradient(circle at 32% 30%, #1a1414 0%, #050202 70%);
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.7),
+    0 30px 80px -10px rgba(0, 0, 0, 0.7),
+    0 0 80px var(--glow);
+  animation: spin 7s linear infinite;
+  animation-play-state: paused;
+  transition: box-shadow var(--transition);
+}
+body.playing .platter { animation-play-state: running; }
+.platter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 210deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.07) 25deg,
+    transparent 50deg,
+    transparent 200deg,
+    rgba(255, 255, 255, 0.04) 230deg,
+    transparent 260deg
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* center label */
+.label-disc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    color-mix(in oklab, var(--label) 100%, white 15%),
+    var(--label) 60%,
+    color-mix(in oklab, var(--label) 100%, black 20%)
+  );
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  transition: background var(--transition);
+}
+.label-disc::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+}
+.label-inner {
+  padding: 14px;
+  z-index: 2;
+  transition: opacity 400ms ease;
+}
+body:not(.playing) .label-inner { opacity: 0.35; }
+.label-inner .alb {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--fg);
+  line-height: 1;
+  margin-bottom: 7px;
+}
+.label-inner .yr {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.4em;
+  color: var(--fg);
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+.label-inner .nic {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: var(--fg);
+  opacity: 0.5;
+  text-transform: uppercase;
+}
+
+/* TONEARM */
+.tonearm {
+  position: absolute;
+  top: -28px;
+  right: -16px;
+  width: 280px;
+  height: 310px;
+  z-index: 10;
+  transform-origin: 88% 12%;
+  transform: rotate(-6deg);
+  pointer-events: none;
+  transition: transform 1.2s cubic-bezier(0.5, 0, 0.2, 1);
+}
+body.playing .tonearm { transform: rotate(-22deg); }
+/* a .lifting class is added briefly by GSAP between era changes to "raise" the arm */
+.tonearm.lifting { transform: rotate(2deg) !important; transition: transform 600ms cubic-bezier(0.5, 0, 0.2, 1); }
+.tonearm-pivot {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #2a2520, #0e0a08);
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+.tonearm-pivot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: #1a1614;
+  border-radius: 50%;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8);
+}
+.tonearm-bar {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  width: 6px;
+  height: 220px;
+  background: linear-gradient(180deg, #b8a99c 0%, #d6c8bb 30%, #8a7b6e 100%);
+  transform-origin: top center;
+  transform: rotate(28deg);
+  border-radius: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+.tonearm-head {
+  position: absolute;
+  bottom: 22px;
+  left: -28px;
+  width: 60px;
+  height: 34px;
+  background: linear-gradient(180deg, #1a1612, #0a0807);
+  border-radius: 4px;
+  transform: rotate(-30deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}

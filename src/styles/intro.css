@@ -1,0 +1,94 @@
+/* INTRO OVERLAY — vinyl drops from above and a label fades in. */
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #050202;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transition: opacity 800ms ease;
+}
+.intro-overlay.fading { opacity: 0; pointer-events: none; }
+
+.intro-vinyl {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 4px),
+    radial-gradient(circle at 32% 30%, #1a1414 0%, #050202 70%);
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.7),
+    0 60px 120px -20px rgba(0, 0, 0, 0.9),
+    0 0 80px rgba(180, 40, 40, 0.4);
+  will-change: transform;
+  animation: intro-drop 1.6s cubic-bezier(0.18, 0.78, 0.32, 1) forwards,
+    intro-spin 6s linear 1.6s infinite;
+}
+@keyframes intro-drop {
+  0%   { transform: translateY(-110vh) rotate(-30deg); }
+  70%  { transform: translateY(-18px) rotate(190deg); }
+  85%  { transform: translateY(8px) rotate(220deg); }
+  100% { transform: translateY(0) rotate(220deg); }
+}
+@keyframes intro-spin {
+  to { transform: translateY(0) rotate(580deg); }
+}
+.intro-vinyl::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #4a1010, #2a0606 60%, #1a0303);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+}
+.intro-vinyl::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #000;
+  z-index: 2;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+}
+.intro-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  animation: intro-label-in 900ms 1s ease-out forwards;
+}
+@keyframes intro-label-in {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.intro-label .nm {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 22px;
+  color: #f0e6e0;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+.intro-label .yr {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.5em;
+  color: rgba(240, 230, 224, 0.7);
+  text-transform: uppercase;
+}

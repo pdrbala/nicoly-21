@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { Environment, OrbitControls } from '@react-three/drei';
 import { NicolyModel } from './NicolyModel';
 import { SkullProp } from './SkullProp';
+import { CameraDriver } from './CameraDriver';
 import { useEraStore } from '../store/useEraStore';
 import { ERA_BY_ID } from '../data/eras';
 
@@ -25,13 +26,14 @@ export function Scene3D() {
     <div className="canvas-wrap">
       <Canvas
         style={{ width: '100%', height: '100%' }}
-        camera={{ position: [0, 0.6, 5.5], fov: 30, near: 0.1, far: 50 }}
+        camera={{ position: [0, 0.4, 6.6], fov: 30, near: 0.1, far: 50 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         resize={{ debounce: 100, scroll: false, offsetSize: true }}
         frameloop="always"
       >
         <Suspense fallback={null}>
+          <CameraDriver />
           <RimLight />
           <Environment preset="night" />
           <NicolyModel />

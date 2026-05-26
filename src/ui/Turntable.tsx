@@ -1,12 +1,25 @@
 import { useEraStore } from '../store/useEraStore';
 import { ERA_BY_ID } from '../data/eras';
+import { toggle as togglePlay } from '../audio/playerControls';
 
 export function Turntable() {
   const selected = useEraStore((s) => s.selected);
   const era = selected ? ERA_BY_ID[selected] : null;
+
+  // Clicking the deck toggles play/pause — only meaningful once an era is selected.
+  const onDeckClick = () => {
+    if (!selected) return;
+    togglePlay();
+  };
+
   return (
     <div className="turntable">
-      <div className="deck">
+      <div
+        className="deck"
+        onClick={onDeckClick}
+        role={selected ? 'button' : undefined}
+        aria-label={selected ? 'play/pause' : undefined}
+      >
         <div className="platter" />
         <div className="label-disc">
           <div className="label-inner">

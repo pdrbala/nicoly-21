@@ -1,0 +1,108 @@
+/* HEADER */
+.chrome {
+  position: fixed;
+  top: 28px;
+  left: 32px;
+  right: 32px;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.chrome b { color: var(--fg); font-weight: 400; }
+.chrome .center {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--fg);
+  text-transform: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.chrome .live {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 400ms ease, box-shadow 400ms ease;
+}
+body.playing .chrome .live {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: blink 1.3s ease-in-out infinite;
+}
+
+/* FOOTER */
+.footer {
+  position: fixed;
+  left: 32px;
+  right: 220px;
+  bottom: 28px;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* AUDIO TOGGLE BUTTON */
+.audio {
+  position: fixed;
+  bottom: 28px;
+  right: 32px;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  padding: 8px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.audio .d {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.audio.on .d {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* SKIP-INTRO BUTTON */
+.skip {
+  position: fixed;
+  top: 28px;
+  right: 32px;
+  z-index: 250;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.5);
+  padding: 6px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+.skip:hover { color: #fff; border-color: rgba(255, 255, 255, 0.4); }

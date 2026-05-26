@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useEraStore } from '../store/useEraStore';
 import { usePlaybackStore } from '../store/usePlaybackStore';
 import { ERA_BY_ID } from '../data/eras';
+import { registerAudioElement } from './playerControls';
 
 /**
  * Single HTMLAudioElement reused across eras. AnalyserNode reads the running
@@ -21,6 +22,7 @@ export function useAudioEngine() {
     el.crossOrigin = 'anonymous';
     el.preload = 'auto';
     audioRef.current = el;
+    registerAudioElement(el);
 
     const onTime = () => usePlaybackStore.getState().setTime(el.currentTime);
     const onDur = () => usePlaybackStore.getState().setDuration(el.duration || 0);

@@ -31,10 +31,14 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-# audio assets (copyrighted, kept local)
+# copyrighted media kept local (audio + album artwork)
 public/audio/*.mp3
 public/audio/*.wav
 public/audio/*.ogg
+public/covers/*.jpg
+public/covers/*.jpeg
+public/covers/*.png
+public/covers/*.webp
 
 # env
 .env

@@ -41,3 +41,15 @@ export function flashTransition(): gsap.core.Timeline {
     .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.inOut' });
   return tl;
 }
+
+/**
+ * Lift the tonearm off the disc, hold briefly, then let CSS drop it back into
+ * the playing position. Called when the user switches between eras (so the
+ * track change feels like a real DJ swap, not just a color tween).
+ */
+export function liftTonearm(holdMs = 520) {
+  const arm = document.querySelector('.tonearm');
+  if (!arm) return;
+  arm.classList.add('lifting');
+  window.setTimeout(() => arm.classList.remove('lifting'), holdMs);
+}

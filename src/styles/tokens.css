@@ -1,0 +1,71 @@
+:root {
+  --bg: #0a0606;
+  --paint: #2a0a0a;
+  --label: #1a0a0a;
+  --fg: #f0e6e0;
+  --muted: rgba(240, 230, 224, 0.5);
+  --line: rgba(255, 255, 255, 0.1);
+  --glow: rgba(180, 40, 40, 0.18);
+  --accent: #8a3a3a;
+  --transition: 1500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--fg);
+  font-family: 'Space Mono', monospace;
+}
+
+body {
+  transition: background var(--transition), color var(--transition);
+  background:
+    radial-gradient(ellipse 70% 80% at 15% 75%, var(--paint) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 60% at 100% 0%, rgba(0, 0, 0, 0.5) 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* grain + vignette overlays */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 80;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 78;
+  background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 50%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* corner brackets */
+.bk {
+  position: fixed;
+  z-index: 30;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--line);
+  pointer-events: none;
+  transition: border-color var(--transition);
+}
+.bk.tl { top: 18px; left: 18px; border-right: 0; border-bottom: 0; }
+.bk.tr { top: 18px; right: 18px; border-left: 0; border-bottom: 0; }
+.bk.bl { bottom: 18px; left: 18px; border-right: 0; border-top: 0; }
+.bk.br { bottom: 18px; right: 18px; border-left: 0; border-top: 0; }
+
+@keyframes blink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }

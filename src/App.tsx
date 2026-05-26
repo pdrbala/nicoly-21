@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEraStore } from './store/useEraStore';
 import { useAudioEngine } from './audio/useAudioEngine';
-import { tweenVars, flashTransition } from './anim/eraTransition';
-import { ERA_BY_ID } from './data/eras';
+import { tweenVars, flashTransition, liftTonearm } from './anim/eraTransition';
+import { ERA_BY_ID, type EraId } from './data/eras';
 import { Chrome } from './ui/Chrome';
 import { Turntable } from './ui/Turntable';
 import { LinerNotes } from './ui/LinerNotes';
@@ -25,13 +25,23 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, []);
 
-  // apply theme + flash on era change
+  // apply theme + flash on era change; lift tonearm on era→era swaps
+  const prevEraRef = useRef<EraId | null>(null);
   useEffect(() => {
-    if (!selected) return;
+    if (!selected) {
+      prevEraRef.current = null;
+      return;
+    }
     const era = ERA_BY_ID[selected];
     flashTransition();
     tweenVars(era);
     document.body.classList.add('playing');
+    // Only lift the tonearm when switching between two playing eras —
+    // not on the first selection out of stand-by (the CSS handles that).
+    if (prevEraRef.current && prevEraRef.current !== selected) {
+      liftTonearm();
+    }
+    prevEraRef.current = selected;
   }, [selected]);
 
   // remove .playing on stand-by

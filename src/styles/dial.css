@@ -1,0 +1,295 @@
+/* DIAL WRAPPER (bottom strip) */
+.dial-wrap {
+  position: fixed;
+  left: 60px;
+  right: 60px;
+  bottom: 78px;
+  z-index: 20;
+}
+.dial-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dial-head b { color: var(--fg); font-weight: 400; }
+.dial { position: relative; padding: 8px 0 14px; }
+.dial-rail { position: relative; height: 16px; margin-bottom: 18px; }
+.dial-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 8%, var(--line) 92%, transparent);
+}
+.dial-needle {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--glow);
+  transition: left 900ms cubic-bezier(0.4, 0, 0.2, 1), opacity 500ms ease;
+  z-index: 3;
+  opacity: 0;
+}
+body.playing .dial-needle { opacity: 1; }
+.dial-needle::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+/* TRACK PROGRESS BAR (thin line below shelf, fills with playback time) */
+.dial-progress {
+  position: relative;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-top: 14px;
+  border-radius: 1px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+body.playing .dial-progress { opacity: 1; }
+.dial-progress .fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, transparent, var(--accent) 12%, var(--accent) 100%);
+  box-shadow: 0 0 8px var(--glow);
+  transition: width 300ms linear;
+}
+
+/* SHELF + CARDS */
+.shelf {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: stretch;
+}
+.album-card {
+  position: relative;
+  width: 142px;
+  height: 142px;
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #050505;
+  transition: transform 450ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 450ms ease, opacity 450ms ease, border-color 450ms ease;
+}
+.album-card .cover { position: absolute; inset: 0; transition: filter 450ms ease; }
+.album-card .cover-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  z-index: 1;
+  filter: contrast(1.06) saturate(0.88) sepia(0.07) brightness(0.96);
+}
+/* paper grain */
+.album-card .cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  pointer-events: none;
+}
+/* vignette + dust haze */
+.album-card .cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 110% 110% at 50% 50%, transparent 55%, rgba(0,0,0,0.45) 100%),
+    radial-gradient(ellipse 30% 22% at 18% 28%, rgba(255,240,210,0.10), transparent 70%),
+    radial-gradient(ellipse 25% 18% at 82% 76%, rgba(255,240,210,0.08), transparent 70%);
+  mix-blend-mode: multiply;
+}
+/* fine scratch lines */
+.album-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      92deg,
+      transparent 0 6px,
+      rgba(255,255,255,0.025) 6px 7px,
+      transparent 7px 23px,
+      rgba(0,0,0,0.08) 23px 24px,
+      transparent 24px 41px
+    ),
+    repeating-linear-gradient(
+      88deg,
+      transparent 0 13px,
+      rgba(255,255,255,0.015) 13px 14px,
+      transparent 14px 37px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+.album-card .info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 12px 11px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.65) 55%, rgba(0, 0, 0, 0.92) 100%);
+  z-index: 6;
+}
+.album-card .track {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.album-card .nm {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 17px;
+  color: #fff;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+  white-space: nowrap;
+}
+.album-card .yr {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.45em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+.album-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px -10px var(--card-glow, rgba(0, 0, 0, 0.6)),
+    0 0 0 1px rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.shelf.has-active .album-card { opacity: 0.4; }
+.shelf.has-active .album-card:hover { opacity: 0.78; transform: translateY(-4px); }
+.shelf.has-active .album-card.active {
+  opacity: 1;
+  transform: translateY(-10px) scale(1.025);
+  box-shadow:
+    0 22px 48px -10px var(--card-glow, rgba(0, 0, 0, 0.6)),
+    0 0 0 1px var(--card-accent, rgba(255, 255, 255, 0.4)),
+    0 0 50px var(--card-glow, transparent);
+  border-color: transparent;
+}
+.shelf.has-active .album-card.active.pulsing { will-change: transform; }
+.shelf.has-active .album-card:not(.active) .cover { filter: saturate(0.7) brightness(0.7); }
+
+/* PLAYER controls overlaid on the active card (play/pause + thin track bar) */
+.album-card .player {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.album-card.active .player { display: flex; pointer-events: auto; }
+.album-card .player .pp {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 250ms ease, transform 250ms ease, background 200ms ease;
+  backdrop-filter: blur(6px);
+}
+.album-card.active:hover .player .pp,
+.album-card.active .player .pp:focus-visible { opacity: 1; transform: scale(1); }
+.album-card .player .pp:hover { background: rgba(0, 0, 0, 0.75); }
+.album-card .player .pp svg { width: 16px; height: 16px; fill: #fff; }
+.album-card .card-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  z-index: 8;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+.album-card .card-progress > i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--card-accent, var(--accent));
+  box-shadow: 0 0 8px var(--card-glow, var(--glow));
+  transition: width 300ms linear;
+}
+
+/* per-album gradient fallbacks (used only if cover image is missing) */
+.cover-vessel {
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 78%, rgba(163, 124, 255, 0.55) 0%, transparent 58%),
+    linear-gradient(180deg, #15131f 0%, #2a1f4a 65%, #1a1230 100%);
+}
+.cover-vessel::before {
+  content: '';
+  position: absolute;
+  inset: auto 22% 32% 22%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+}
+.cover-blurry {
+  background:
+    radial-gradient(ellipse 90% 40% at 50% 22%, rgba(220, 30, 30, 0.72) 0%, transparent 62%),
+    linear-gradient(180deg, #2a0606 0%, #0a0000 100%);
+}
+.cover-trench {
+  background:
+    linear-gradient(90deg, transparent 0%, transparent 62%, #f5c000 62%, #f5c000 64%, transparent 64%, transparent 100%),
+    linear-gradient(180deg, #2d3a1e 0%, #1a200a 100%);
+}
+.cover-sai {
+  background:
+    repeating-linear-gradient(180deg, transparent 0 12px, rgba(255, 255, 255, 0.05) 12px 13px),
+    linear-gradient(180deg, #c8e2f2 0%, #6cb7da 50%, #2a6a8a 100%);
+}
+.cover-clancy {
+  background: linear-gradient(180deg, #0a0402 0%, #4a1f0a 22%, #b86028 52%, #e88a3c 72%, #f5e9d6 100%);
+}
+.cover-breach {
+  background: linear-gradient(180deg, #06091a 0%, #0e1a4a 50%, #1f44b8 85%, #508cff 100%);
+}
