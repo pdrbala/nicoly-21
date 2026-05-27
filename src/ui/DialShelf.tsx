@@ -86,6 +86,7 @@ export function DialShelf() {
                     }}
                   />
                 </div>
+                {isActive && <span className="album-pin" aria-hidden="true" />}
                 <div className="info">
                   <div className="track">A{i + 1}</div>
                   <div className="nm">{e.name}</div>

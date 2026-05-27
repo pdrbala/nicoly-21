@@ -1,5 +1,5 @@
 interface TonearmProps {
-  onPointerDown?: (e: React.PointerEvent<SVGSVGElement>) => void;
+  onPointerDown?: (e: React.PointerEvent<SVGGElement>) => void;
 }
 
 /**
@@ -23,7 +23,6 @@ export function TonearmSVG({ onPointerDown }: TonearmProps) {
       height="100%"
       preserveAspectRatio="xMidYMid meet"
       xmlns="http://www.w3.org/2000/svg"
-      onPointerDown={onPointerDown}
       style={{ display: 'block', overflow: 'visible' }}
     >
       <defs>
@@ -52,6 +51,7 @@ export function TonearmSVG({ onPointerDown }: TonearmProps) {
       </defs>
 
       {/* Counterweight — sits BEHIND the pivot, opposite the arm */}
+      <g className="tonearm-hit" onPointerDown={onPointerDown}>
       <g transform="translate(245, 28) rotate(-10)">
         <rect x="-2" y="-14" width="46" height="28" rx="6" fill="url(#weight-grad)" filter="url(#drop)" />
         {/* light streak */}
@@ -113,6 +113,7 @@ export function TonearmSVG({ onPointerDown }: TonearmProps) {
         <rect x="34" y="6" width="14" height="6" rx="1" fill="#0a0606" />
         {/* needle/stylus tip */}
         <path d="M 41 11 L 39 16 L 43 16 Z" fill="#1f1816" />
+      </g>
       </g>
     </svg>
   );

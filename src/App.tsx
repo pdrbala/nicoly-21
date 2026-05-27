@@ -6,6 +6,7 @@ import { tweenVars, flashTransition, liftTonearm } from './anim/eraTransition';
 import { ERA_BY_ID, type EraId } from './data/eras';
 import { Turntable } from './ui/Turntable';
 import { LinerNotes } from './ui/LinerNotes';
+import { LyricsPanel } from './ui/LyricsPanel';
 import { DialShelf } from './ui/DialShelf';
 import { IntroSequence } from './ui/IntroSequence';
 import { Scene3D } from './canvas/Scene3D';
@@ -55,6 +56,7 @@ export default function App() {
       <main className="stage">
         <Turntable />
         <LinerNotes />
+        <LyricsPanel />
         <Scene3D />
       </main>
 
