@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useEraStore } from '../store/useEraStore';
 import { usePlaybackStore } from '../store/usePlaybackStore';
 import { ERA_BY_ID } from '../data/eras';
-import { registerAudioElement } from './playerControls';
+import { play, registerAudioElement, registerBeforePlay } from './playerControls';
 
 /**
  * Single HTMLAudioElement reused across eras. AnalyserNode reads the running
@@ -23,6 +23,11 @@ export function useAudioEngine() {
     el.preload = 'auto';
     audioRef.current = el;
     registerAudioElement(el);
+    registerBeforePlay(async () => {
+      if (ctxRef.current?.state === 'suspended') {
+        await ctxRef.current.resume();
+      }
+    });
 
     const onTime = () => usePlaybackStore.getState().setTime(el.currentTime);
     const onDur = () => usePlaybackStore.getState().setDuration(el.duration || 0);
@@ -81,12 +86,7 @@ export function useAudioEngine() {
         };
         tick();
       }
-      if (ctxRef.current.state === 'suspended') await ctxRef.current.resume();
-      try {
-        await el.play();
-      } catch (err) {
-        console.warn('audio play blocked', err);
-      }
+      await play();
     };
     ensureCtx();
   }, [selected]);

@@ -3,77 +3,10 @@
   position: fixed;
   left: 60px;
   right: 60px;
-  bottom: 78px;
+  bottom: clamp(34px, 6.5dvh, 78px);
   z-index: 20;
 }
-.dial-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 14px;
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.dial-head b { color: var(--fg); font-weight: 400; }
-.dial { position: relative; padding: 8px 0 14px; }
-.dial-rail { position: relative; height: 16px; margin-bottom: 18px; }
-.dial-line {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line) 8%, var(--line) 92%, transparent);
-}
-.dial-needle {
-  position: absolute;
-  top: -8px;
-  bottom: -8px;
-  width: 2px;
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--glow);
-  transition: left 900ms cubic-bezier(0.4, 0, 0.2, 1), opacity 500ms ease;
-  z-index: 3;
-  opacity: 0;
-}
-body.playing .dial-needle { opacity: 1; }
-.dial-needle::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 10px;
-  background: var(--accent);
-  clip-path: polygon(50% 0, 0 100%, 100% 100%);
-}
-
-/* TRACK PROGRESS BAR (thin line below shelf, fills with playback time) */
-.dial-progress {
-  position: relative;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.06);
-  margin-top: 14px;
-  border-radius: 1px;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 500ms ease;
-}
-body.playing .dial-progress { opacity: 1; }
-.dial-progress .fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, transparent, var(--accent) 12%, var(--accent) 100%);
-  box-shadow: 0 0 8px var(--glow);
-  transition: width 300ms linear;
-}
+.dial { position: relative; }
 
 /* SHELF + CARDS */
 .shelf {
@@ -103,7 +36,7 @@ body.playing .dial-progress { opacity: 1; }
   object-position: center;
   display: block;
   z-index: 1;
-  filter: contrast(1.06) saturate(0.88) sepia(0.07) brightness(0.96);
+  filter: contrast(1.1) saturate(0.82) sepia(0.12) brightness(0.94);
 }
 /* paper grain */
 .album-card .cover::after {
@@ -114,7 +47,7 @@ body.playing .dial-progress { opacity: 1; }
   background-image:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   mix-blend-mode: overlay;
-  opacity: 0.55;
+  opacity: 0.68;
   pointer-events: none;
 }
 /* vignette + dust haze */
@@ -129,6 +62,22 @@ body.playing .dial-progress { opacity: 1; }
     radial-gradient(ellipse 30% 22% at 18% 28%, rgba(255,240,210,0.10), transparent 70%),
     radial-gradient(ellipse 25% 18% at 82% 76%, rgba(255,240,210,0.08), transparent 70%);
   mix-blend-mode: multiply;
+}
+/* rusty record-sleeve patina */
+.album-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='r'><feTurbulence type='fractalNoise' baseFrequency='0.045 0.12' numOctaves='5' seed='21'/><feColorMatrix values='0.62 0 0 0 0.38 0 0.28 0 0 0.14 0 0 0.09 0 0.03 0 0 0 .72 0'/></filter><rect width='100%' height='100%' filter='url(%23r)'/></svg>"),
+    radial-gradient(ellipse 70% 40% at 18% 18%, rgba(167, 76, 34, 0.22), transparent 58%),
+    radial-gradient(ellipse 48% 30% at 88% 74%, rgba(225, 137, 66, 0.16), transparent 62%),
+    linear-gradient(135deg, rgba(73, 37, 18, 0.22), transparent 42%, rgba(155, 71, 28, 0.12));
+  background-size: 180px 180px, 100% 100%, 100% 100%, 100% 100%;
+  mix-blend-mode: soft-light;
+  opacity: 0.72;
 }
 /* fine scratch lines */
 .album-card::after {
@@ -240,25 +189,6 @@ body.playing .dial-progress { opacity: 1; }
 .album-card.active .player .pp:focus-visible { opacity: 1; transform: scale(1); }
 .album-card .player .pp:hover { background: rgba(0, 0, 0, 0.75); }
 .album-card .player .pp svg { width: 16px; height: 16px; fill: #fff; }
-.album-card .card-progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  z-index: 8;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-.album-card .card-progress > i {
-  display: block;
-  height: 100%;
-  width: 0%;
-  background: var(--card-accent, var(--accent));
-  box-shadow: 0 0 8px var(--card-glow, var(--glow));
-  transition: width 300ms linear;
-}
-
 /* per-album gradient fallbacks (used only if cover image is missing) */
 .cover-vessel {
   background:

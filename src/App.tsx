@@ -1,20 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { useEraStore } from './store/useEraStore';
+import { usePlaybackStore } from './store/usePlaybackStore';
 import { useAudioEngine } from './audio/useAudioEngine';
 import { tweenVars, flashTransition, liftTonearm } from './anim/eraTransition';
 import { ERA_BY_ID, type EraId } from './data/eras';
-import { Chrome } from './ui/Chrome';
 import { Turntable } from './ui/Turntable';
 import { LinerNotes } from './ui/LinerNotes';
 import { DialShelf } from './ui/DialShelf';
-import { AudioToggle } from './ui/AudioToggle';
-import { Footer } from './ui/Footer';
 import { IntroSequence } from './ui/IntroSequence';
 import { Scene3D } from './canvas/Scene3D';
 
 export default function App() {
   const selected = useEraStore((s) => s.selected);
   const introDone = useEraStore((s) => s.introDone);
+  const playing = usePlaybackStore((s) => s.playing);
 
   useAudioEngine();
 
@@ -35,7 +34,6 @@ export default function App() {
     const era = ERA_BY_ID[selected];
     flashTransition();
     tweenVars(era);
-    document.body.classList.add('playing');
     // Only lift the tonearm when switching between two playing eras —
     // not on the first selection out of stand-by (the CSS handles that).
     if (prevEraRef.current && prevEraRef.current !== selected) {
@@ -44,21 +42,15 @@ export default function App() {
     prevEraRef.current = selected;
   }, [selected]);
 
-  // remove .playing on stand-by
   useEffect(() => {
-    if (!selected) document.body.classList.remove('playing');
-  }, [selected]);
+    document.body.classList.toggle('playing', playing);
+    return () => document.body.classList.remove('playing');
+  }, [playing]);
 
   return (
     <>
       <div className="grain" />
       <div className="vignette" />
-      <div className="bk tl" />
-      <div className="bk tr" />
-      <div className="bk bl" />
-      <div className="bk br" />
-
-      <Chrome />
 
       <main className="stage">
         <Turntable />
@@ -67,8 +59,6 @@ export default function App() {
       </main>
 
       <DialShelf />
-      <Footer />
-      <AudioToggle />
 
       {!introDone && <IntroSequence />}
     </>

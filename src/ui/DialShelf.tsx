@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useEraStore } from '../store/useEraStore';
 import { usePlaybackStore } from '../store/usePlaybackStore';
-import { ERAS, ERA_BY_ID } from '../data/eras';
+import { ERAS } from '../data/eras';
 import { toggle as togglePlay } from '../audio/playerControls';
 
 const COVER_CLASS: Record<string, string> = {
@@ -33,46 +33,18 @@ export function DialShelf() {
   const selected = useEraStore((s) => s.selected);
   const select = useEraStore((s) => s.select);
   const playing = usePlaybackStore((s) => s.playing);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const needleRef = useRef<HTMLDivElement>(null);
   const activeCardRef = useRef<HTMLDivElement>(null);
-  const cardProgressRef = useRef<HTMLElement>(null);
-  const dialProgressRef = useRef<HTMLDivElement>(null);
-  const era = selected ? ERA_BY_ID[selected] : null;
 
-  // Position needle over the active card's horizontal center
-  useEffect(() => {
-    const update = () => {
-      const wrap = wrapRef.current;
-      const active = wrap?.querySelector('.album-card.active') as HTMLElement | null;
-      const needle = needleRef.current;
-      if (!wrap || !active || !needle) return;
-      const wr = wrap.getBoundingClientRect();
-      const cr = active.getBoundingClientRect();
-      const cx = cr.left + cr.width / 2 - wr.left;
-      needle.style.left = `${(cx / wr.width) * 100}%`;
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [selected]);
-
-  // Drive the active card's "breathing" scale + the per-card and dial progress
-  // bars from a single RAF that reads the store imperatively (no re-render thrash).
+  // Drive the active card's "breathing" scale from a single RAF that reads
+  // the store imperatively (no re-render thrash).
   useEffect(() => {
     const card = activeCardRef.current;
     if (!card) return;
     let raf = 0;
     const loop = () => {
-      const { level, time, duration } = usePlaybackStore.getState();
+      const { level } = usePlaybackStore.getState();
       const scale = 1.025 + level * 0.06;
       card.style.transform = `translateY(-10px) scale(${scale.toFixed(4)})`;
-      const pct = duration > 0 ? Math.min(100, (time / duration) * 100) : 0;
-      if (cardProgressRef.current) cardProgressRef.current.style.width = pct + '%';
-      if (dialProgressRef.current) {
-        const fill = dialProgressRef.current.querySelector('.fill') as HTMLElement | null;
-        if (fill) fill.style.width = pct + '%';
-      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -85,20 +57,8 @@ export function DialShelf() {
   };
 
   return (
-    <div className="dial-wrap" ref={wrapRef}>
-      <div className="dial-head">
-        <span>
-          SIDE A · <b>NICOLY</b> · 6 FAIXAS
-        </span>
-        <span className="right">
-          SELECIONE · <b>{era ? `${era.track} · ${era.name}` : 'stand by'}</b>
-        </span>
-      </div>
+    <div className="dial-wrap">
       <div className="dial">
-        <div className="dial-rail">
-          <div className="dial-line" />
-          <div className="dial-needle" ref={needleRef} style={{ left: '50%' }} />
-        </div>
         <div className={`shelf ${selected ? 'has-active' : ''}`}>
           {ERAS.map((e, i) => {
             const isActive = e.id === selected;
@@ -132,27 +92,19 @@ export function DialShelf() {
                   <div className="yr">— {e.year} —</div>
                 </div>
                 {isActive && (
-                  <>
-                    <div className="player">
-                      <button
-                        className="pp"
-                        onClick={onPlayPause}
-                        aria-label={playing ? 'pause' : 'play'}
-                      >
-                        {playing ? <PauseIcon /> : <PlayIcon />}
-                      </button>
-                    </div>
-                    <div className="card-progress">
-                      <i ref={cardProgressRef as any} />
-                    </div>
-                  </>
+                  <div className="player">
+                    <button
+                      className="pp"
+                      onClick={onPlayPause}
+                      aria-label={playing ? 'pause' : 'play'}
+                    >
+                      {playing ? <PauseIcon /> : <PlayIcon />}
+                    </button>
+                  </div>
                 )}
               </div>
             );
           })}
-        </div>
-        <div className="dial-progress" ref={dialProgressRef}>
-          <div className="fill" />
         </div>
       </div>
     </div>

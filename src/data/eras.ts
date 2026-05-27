@@ -53,7 +53,7 @@ export const ERAS: Era[] = [
     sid: 'N-VSL',
     phrase: 'antes de saber, você já era.',
     cover: 'vessel',
-    coverImage: 'covers/vessel.jpg',
+    coverImage: 'covers/twenty-one-pilots-vessel.jpg',
     skullMaterial: { color: '#e8eef4', emissive: '#1a2538', metalness: 0.05, roughness: 0.55 },
   },
   {
@@ -77,7 +77,7 @@ export const ERAS: Era[] = [
     sid: 'N-BLR',
     phrase: 'a coragem de chamar suas sombras pelo nome.',
     cover: 'blurry',
-    coverImage: 'covers/blurryface.jpg',
+    coverImage: 'covers/twenty-one-pilots-blurryface.jpg',
     // Black mask, blood-red glow under the skin — pure Blurryface vibe.
     skullMaterial: { color: '#0a0202', emissive: '#e63946', metalness: 0.35, roughness: 0.55 },
   },
@@ -102,7 +102,7 @@ export const ERAS: Era[] = [
     sid: 'N-TRN',
     phrase: 'fugir foi o jeito de voltar pra dentro.',
     cover: 'trench',
-    coverImage: 'covers/trench.jpg',
+    coverImage: 'covers/twenty-one-pilots-trench.jpg',
     // Yellow-painted skull, the Bandito mask vibe.
     skullMaterial: { color: '#f5c518', emissive: '#3a2d08', metalness: 0.15, roughness: 0.6 },
   },
@@ -127,7 +127,7 @@ export const ERAS: Era[] = [
     sid: 'N-SAI',
     phrase: 'luz baixa o bastante pra dormir, alta o bastante pra esperar.',
     cover: 'sai',
-    coverImage: 'covers/sai.jpg',
+    coverImage: 'covers/twenty-one-pilots-scaled-and-icy.jpg',
     // Icy chrome — clean metallic teal with a hint of cyan glow.
     skullMaterial: { color: '#cfe9f2', emissive: '#0e3a52', metalness: 0.92, roughness: 0.12 },
   },
@@ -152,7 +152,7 @@ export const ERAS: Era[] = [
     sid: 'N-CLY',
     phrase: 'o fim de um capítulo cabia num abraço.',
     cover: 'clancy',
-    coverImage: 'covers/clancy.jpg',
+    coverImage: 'covers/twenty-one-pilots-clancy.jpg',
     // Copper / rust — sun-baked metal mask.
     skullMaterial: { color: '#a04018', emissive: '#e8772c', metalness: 0.7, roughness: 0.4 },
   },
@@ -177,7 +177,7 @@ export const ERAS: Era[] = [
     sid: 'N-BRC',
     phrase: 'a rachadura por onde o mundo grande entra.',
     cover: 'breach',
-    coverImage: 'covers/breach.jpg',
+    coverImage: 'covers/twenty-one-pilots-breach.jpg',
     // Pitch-black mask under a hot crimson spotlight emission.
     skullMaterial: { color: '#080202', emissive: '#c91e26', metalness: 0.55, roughness: 0.45 },
   },

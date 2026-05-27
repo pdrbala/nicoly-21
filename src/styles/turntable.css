@@ -2,14 +2,15 @@
 .stage {
   position: relative;
   z-index: 10;
+  --turntable-size: clamp(300px, min(26vw, 50dvh), 410px);
+  --shelf-clearance: clamp(214px, 28dvh, 288px);
   height: 100%;
   display: grid;
-  /* Vinyl column dominates a bit more; canvas keeps enough width that the
-     3D model doesn't get cropped horizontally. */
-  grid-template-columns: 560px 1.05fr 0.95fr;
-  gap: 52px;
-  padding: 80px 56px 280px;
-  align-items: center;
+  /* Vinyl and tonearm share one scale so their geometry stays aligned. */
+  grid-template-columns: var(--turntable-size) minmax(360px, 1.05fr) minmax(280px, 0.95fr);
+  gap: clamp(28px, 3.25vw, 52px);
+  padding: clamp(42px, 7dvh, 78px) clamp(28px, 3.5vw, 56px) var(--shelf-clearance);
+  align-items: start;
 }
 
 /* TURNTABLE */
@@ -20,8 +21,8 @@
 }
 .deck {
   position: relative;
-  width: 540px;
-  height: 540px;
+  width: var(--turntable-size);
+  aspect-ratio: 1;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -66,8 +67,8 @@ body.playing .platter { animation-play-state: running; }
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 218px;
-  height: 218px;
+  width: 40.37%;
+  aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(
     circle at 35% 30%,
@@ -87,8 +88,8 @@ body.playing .platter { animation-play-state: running; }
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 17px;
-  height: 17px;
+  width: 7.8%;
+  aspect-ratio: 1;
   border-radius: 50%;
   background: #000;
   box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.25);
@@ -145,13 +146,13 @@ body.playing .label-svg { opacity: 1; }
    on the SVG itself (with visiblePainted hit-testing on its shapes). */
 .tonearm {
   position: absolute;
-  top: -12px;
-  right: -42px;
-  width: 352px;
-  height: 376px;
+  top: calc(var(--turntable-size) * -0.0222);
+  right: calc(var(--turntable-size) * -0.0778);
+  width: calc(var(--turntable-size) * 0.6519);
+  height: calc(var(--turntable-size) * 0.6963);
   z-index: 10;
-  transform-origin: 279px 33px;
-  transform: rotate(-6deg);
+  transform-origin: 79.26% 8.78%;
+  transform: rotate(10deg);
   pointer-events: none;
   transition: transform 1.2s cubic-bezier(0.5, 0, 0.2, 1);
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
@@ -159,7 +160,7 @@ body.playing .label-svg { opacity: 1; }
 body.playing .tonearm { transform: rotate(-22deg); }
 /* GSAP adds .lifting briefly between era changes to raise the arm off the disc */
 .tonearm.lifting {
-  transform: rotate(4deg);
+  transform: rotate(14deg);
   transition: transform 600ms cubic-bezier(0.5, 0, 0.2, 1);
 }
 .tonearm.dragging {
@@ -179,9 +180,53 @@ body.arm-dragging * { cursor: grabbing !important; user-select: none; }
    rotates (it's exactly the transform-origin point). */
 .pivot-anchor {
   position: absolute;
-  left: 279px;
-  top: 33px;
+  left: 79.26%;
+  top: 8.78%;
   width: 1px;
   height: 1px;
   pointer-events: none;
+}
+
+@media (max-width: 1280px) {
+  .stage {
+    --turntable-size: clamp(280px, min(30vw, 46dvh), 360px);
+    --shelf-clearance: clamp(210px, 29dvh, 276px);
+    grid-template-columns: var(--turntable-size) minmax(330px, 1.1fr) minmax(220px, 0.8fr);
+    gap: clamp(20px, 2.8vw, 36px);
+  }
+}
+
+@media (max-width: 1040px) {
+  .stage {
+    --turntable-size: clamp(260px, min(34vw, 44dvh), 330px);
+    --shelf-clearance: clamp(206px, 28dvh, 260px);
+    grid-template-columns: var(--turntable-size) minmax(310px, 1fr);
+  }
+
+  .canvas-wrap {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .stage {
+    --turntable-size: clamp(240px, 68vw, 320px);
+    --shelf-clearance: 248px;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-content: start;
+    gap: 0;
+    padding: 126px 20px 248px;
+  }
+
+  .stage .liner {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .stage {
+    --turntable-size: clamp(220px, 72vw, 290px);
+    padding-top: 132px;
+  }
 }

@@ -6,11 +6,13 @@ import { play, pause, toggle as togglePlay } from '../audio/playerControls';
 import { TonearmSVG } from './Tonearm';
 import { VinylLabel } from './VinylLabel';
 
-// Snap thresholds (degrees). Above REST_AT → user released the arm in the
-// rest position (we pause). Below it → user dropped onto the disc (we play).
-const REST_THRESHOLD = -12;
+// Snap thresholds (degrees). Dragging right parks the arm off the record and
+// pauses. Dragging left drops it onto the groove and resumes.
+const PLAY_ROTATION = -22;
+const REST_ROTATION = 10;
+const REST_THRESHOLD = 8;
 const MIN_ROTATION = -28;
-const MAX_ROTATION = 12;
+const MAX_ROTATION = 14;
 
 export function Turntable() {
   const selected = useEraStore((s) => s.selected);
@@ -40,7 +42,7 @@ export function Turntable() {
 
     const startCursorAngle =
       Math.atan2(e.clientY - pivotY, e.clientX - pivotX) * (180 / Math.PI);
-    const baseline = playing ? -22 : -6;
+    const baseline = playing ? PLAY_ROTATION : REST_ROTATION;
     baselineRef.current = baseline;
     const startRotation = manualAngle ?? baseline;
     liveAngleRef.current = startRotation;
