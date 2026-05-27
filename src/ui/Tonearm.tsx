@@ -19,8 +19,9 @@ export function TonearmSVG({ onPointerDown }: TonearmProps) {
   return (
     <svg
       viewBox="0 0 300 320"
-      width="300"
-      height="320"
+      width="100%"
+      height="100%"
+      preserveAspectRatio="xMidYMid meet"
       xmlns="http://www.w3.org/2000/svg"
       onPointerDown={onPointerDown}
       style={{ display: 'block', overflow: 'visible' }}
