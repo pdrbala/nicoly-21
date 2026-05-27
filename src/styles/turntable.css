@@ -90,97 +90,96 @@ body.playing .platter { animation-play-state: running; }
   border-radius: 50%;
   background: #000;
   box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+  z-index: 3;
 }
-.label-inner {
-  padding: 14px;
-  z-index: 2;
+
+/* Curved label SVG — text wraps around the rim of the disc label */
+.label-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.85;
   transition: opacity 400ms ease;
 }
-body:not(.playing) .label-inner { opacity: 0.35; }
-.label-inner .alb {
+body.playing .label-svg { opacity: 1; }
+.label-svg text { fill: var(--fg); }
+.label-svg .lbl-name {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-weight: 500;
-  font-size: 19px;
-  color: var(--fg);
-  line-height: 1;
-  margin-bottom: 7px;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
 }
-.label-inner .yr {
+.label-svg .lbl-side {
   font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.4em;
-  color: var(--fg);
-  opacity: 0.7;
-  margin-bottom: 10px;
-}
-.label-inner .nic {
-  font-family: 'Space Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.3em;
-  color: var(--fg);
-  opacity: 0.5;
+  font-size: 5.8px;
+  letter-spacing: 0.38em;
   text-transform: uppercase;
+  fill: var(--fg);
+  opacity: 0.65;
+}
+.label-svg .lbl-track {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.45em;
+  fill: var(--fg);
+  opacity: 0.75;
+}
+.label-svg .lbl-mini {
+  font-family: 'Space Mono', monospace;
+  font-size: 4.5px;
+  letter-spacing: 0.5em;
+  fill: var(--fg);
+  opacity: 0.4;
 }
 
-/* TONEARM */
+/* TONEARM — wrapper rotates around the SVG's pivot point (238, 28).
+   The whole arm is rendered by <TonearmSVG /> inside this div; the CSS only
+   positions the wrapper and animates rotation between stand-by / playing /
+   lifting states. The arm is interactive: pointer-events:none on the wrapper
+   (so empty space passes clicks to the deck below), but pointer-events:auto
+   on the SVG itself (with visiblePainted hit-testing on its shapes). */
 .tonearm {
   position: absolute;
-  top: -28px;
-  right: -16px;
-  width: 280px;
-  height: 310px;
+  top: -8px;
+  right: -30px;
+  width: 300px;
+  height: 320px;
   z-index: 10;
-  transform-origin: 88% 12%;
+  transform-origin: 238px 28px;
   transform: rotate(-6deg);
   pointer-events: none;
   transition: transform 1.2s cubic-bezier(0.5, 0, 0.2, 1);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
 }
 body.playing .tonearm { transform: rotate(-22deg); }
-/* a .lifting class is added briefly by GSAP between era changes to "raise" the arm */
-.tonearm.lifting { transform: rotate(2deg) !important; transition: transform 600ms cubic-bezier(0.5, 0, 0.2, 1); }
-.tonearm-pivot {
-  position: absolute;
-  top: 12px;
-  right: 24px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #2a2520, #0e0a08);
-  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.5);
+/* GSAP adds .lifting briefly between era changes to raise the arm off the disc */
+.tonearm.lifting {
+  transform: rotate(4deg);
+  transition: transform 600ms cubic-bezier(0.5, 0, 0.2, 1);
 }
-.tonearm-pivot::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  background: #1a1614;
-  border-radius: 50%;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8);
+.tonearm.dragging {
+  transition: none;
 }
-.tonearm-bar {
-  position: absolute;
-  top: 30px;
-  right: 40px;
-  width: 6px;
-  height: 220px;
-  background: linear-gradient(180deg, #b8a99c 0%, #d6c8bb 30%, #8a7b6e 100%);
-  transform-origin: top center;
-  transform: rotate(28deg);
-  border-radius: 3px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+.tonearm svg {
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
 }
-.tonearm-head {
+.tonearm.dragging svg { cursor: grabbing; }
+body.arm-dragging,
+body.arm-dragging * { cursor: grabbing !important; user-select: none; }
+
+/* The invisible anchor at the rotation pivot. Used by JS to compute pointer
+   angle reliably — its position in screen space stays put while the wrapper
+   rotates (it's exactly the transform-origin point). */
+.pivot-anchor {
   position: absolute;
-  bottom: 22px;
-  left: -28px;
-  width: 60px;
-  height: 34px;
-  background: linear-gradient(180deg, #1a1612, #0a0807);
-  border-radius: 4px;
-  transform: rotate(-30deg);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  left: 238px;
+  top: 28px;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }

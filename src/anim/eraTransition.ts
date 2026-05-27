@@ -8,7 +8,10 @@ function ensureFlash(): HTMLDivElement {
   const d = document.createElement('div');
   d.style.cssText = `
     position: fixed; inset: 0; z-index: 150; pointer-events: none;
-    background: #fff; opacity: 0; mix-blend-mode: screen;
+    opacity: 0;
+    background: radial-gradient(circle at center, var(--accent) 0%, transparent 60%);
+    mix-blend-mode: screen;
+    will-change: opacity, transform;
   `;
   document.body.appendChild(d);
   activeFlash = d;
@@ -27,18 +30,35 @@ export function tweenVars(era: Era, ms = 1200) {
     '--fg': era.fg,
     '--muted': era.muted,
   };
-  // Browsers tween color CSS vars natively when the consuming property has a transition,
-  // so we just set them and let the body's `transition: background var(--transition)` handle it.
+  // Browsers tween color CSS vars natively when the consuming property has a
+  // CSS transition, so we just set them and let the body's transition handle
+  // the easing.
   Object.entries(target).forEach(([k, v]) => r.setProperty(k, v));
-  // Tween a numeric helper var for things that need to read it from JS later.
   void ms;
 }
 
+/**
+ * Era-change visual punctuation. Instead of a bleach-white swipe, this is a
+ * radial pulse tinted by the era's accent color, expanding from the center
+ * and fading out. The `screen` blend brightens the dark backdrop with the
+ * accent — feels like a stage light kicking on in the new color.
+ */
 export function flashTransition(): gsap.core.Timeline {
   const flash = ensureFlash();
+  // Re-assert the background each call so it picks up the latest --accent.
+  flash.style.background =
+    'radial-gradient(circle at center, var(--accent) 0%, transparent 60%)';
   const tl = gsap.timeline();
-  tl.to(flash, { opacity: 0.65, duration: 0.14, ease: 'power3.out' })
-    .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.inOut' });
+  tl.fromTo(
+    flash,
+    { opacity: 0, scale: 0.55, transformOrigin: 'center center' },
+    { opacity: 0.85, scale: 1.15, duration: 0.22, ease: 'power3.out' }
+  ).to(flash, {
+    opacity: 0,
+    scale: 1.45,
+    duration: 0.65,
+    ease: 'power2.inOut',
+  });
   return tl;
 }
 
